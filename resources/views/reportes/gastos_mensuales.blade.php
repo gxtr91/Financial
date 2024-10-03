@@ -33,7 +33,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th>Ultimo registro---</th>
+                                <th>---</th>
                                 <th colspan="4" style="text-align:right">Total:</th>
                             </tr>
                         </tfoot>
