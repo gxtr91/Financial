@@ -18,5 +18,8 @@ class Cuenta extends Model
         'alerta'
     ];
 
-
+    public function transacciones()
+    {
+        return $this->hasMany(Transaccion::class, 'id_cuenta');
+    }
 }

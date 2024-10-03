@@ -294,15 +294,11 @@
                             </a>
                             <ul class="nav-main-submenu">
                                 <li class="nav-main-item">
-                                    <a class="nav-main-link" href="">
+                                    <a class="nav-main-link" href="/reportes/gastos_mensuales">
                                         <span class="nav-main-link-name">Gastos del mes</span>
                                     </a>
                                 </li>
-                                <li class="nav-main-item">
-                                    <a class="nav-main-link" href="">
-                                        <span class="nav-main-link-name">Deficit por cuenta</span>
-                                    </a>
-                                </li>
+
                             </ul>
                         </li>
                         <li class="nav-main-heading">Administracion</li>
