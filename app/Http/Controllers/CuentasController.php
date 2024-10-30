@@ -12,7 +12,7 @@ class CuentasController extends Controller
     public function __invoke(){
 
         $cuentas=Cuenta::all();
-        $columns = ['Nombre de cuenta','Prioridad','Limite','Alerta','Opciones'];
+        $columns = ['Nombre de cuenta','Es presupuesto?','Limite','Alerta','Opciones'];
         $json  = '[
             {"data": "nombre_cuenta", "name": "nombre_cuenta"},
             {"data": "acciones", "name": "acciones", "className": "text-right",  "width": "70px"},
@@ -26,8 +26,12 @@ class CuentasController extends Controller
         return view('cuentas.index',$ctx);
     }
 
-    function json(){
-        $cuentas= Cuenta::get();
+    function json(Request $request){
+        $query= new Cuenta();
+        if ($request->has('cuenta')) {
+            $query->where('es_presupuesto', 'si');
+        }
+        $cuentas = $query->get();
         return Datatables::of($cuentas)
         ->addColumn('acciones', function($row){
             // Aquí puedes definir el contenido de la columna de acciones
@@ -52,16 +56,17 @@ class CuentasController extends Controller
         $request->validate([
             'nombre_cuenta' => 'required|string|max:255',
             'descripcion' => 'required|string',
-            'limite' => 'required|numeric|min:0',
-            'alerta' => 'required|numeric|min:0',
+
         ]);
+
 
         // Crear la nueva cuenta
         Cuenta::create([
             'nombre_cuenta' => $request->nombre_cuenta,
             'descripcion' => $request->descripcion,
-            'limite' => $request->limite,
-            'alerta' => $request->alerta
+            'es_presupuesto' => $request->has('active') ? 'si' : NULL,
+            'limite' => $request->limite ? $request->limite : 0.00,
+            'alerta' => $request->alerta ? $request->alerta:0.00
         ]);
 
         // Respuesta exitosa

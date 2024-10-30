@@ -16,7 +16,7 @@ use GuzzleHttp\Client;
 class TransaccionesController extends Controller
 {
     public function __invoke(){
-        $cuentas = Cuenta::all();
+        $cuentas = Cuenta::orderBy('nombre_cuenta','asc')->get();
         $usuarios = User::all();
         $ctx=[
             'usuarios'=>$usuarios,

@@ -131,16 +131,12 @@
             var initialColumns = {!! $jsonColumns !!};
             // Añadiendo la columna de estado con una función de renderizado
             initialColumns.splice(1, 0, {
-                data: 'prioridad',
+                data: 'es_presupuesto',
                 render: function(data, type, row) {
-                    if (data === 'Alta') {
-                        return '<span class="badge bg-success">Alta</span>';
-                    } else if (data === 'Media') {
-                        return '<span class="badge bg-warning">Media</span>'; // Utilizando el color amarillo para 'Medio'
-                    } else if (data === 'Baja') {
-                        return '<span class="badge bg-danger">Baja</span>'; // Utilizando el color rojo para 'Bajo'
+                    if (data === 'si') {
+                        return '<span class="badge bg-success">Si</span>';
                     } else {
-                        return '<span class="badge bg-secondary">Desconocido</span>'; // Un caso por defecto si no es Alto, Medio o Bajo
+                        return '<span class="badge bg-warning">No</span>'; // Utilizando el color amarillo para 'Medio'
                     }
                 }
             });
@@ -149,10 +145,20 @@
                 title: 'Limite',
                 className: 'text-right', // Alinea el contenido de la celda a la derecha
                 render: function(data, type, row) {
-                    return parseFloat(data).toLocaleString('en', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
+                    // Si es para mostrar en pantalla, formatear el número
+                    if (type === 'display' || type === 'filter') {
+                        if (data === null || data === undefined) {
+                            return '0.00'; // Muestra 0.00 si el valor es null o undefined
+                        } else {
+                            return parseFloat(data).toLocaleString('en', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
+                        }
+                    }
+
+                    // Si es para uso interno, como suma, devolver el valor numérico
+                    return data === null || data === undefined ? 0 : parseFloat(data);
                 }
             });
             initialColumns.splice(3, 0, {
@@ -160,10 +166,16 @@
                 title: 'Alerta',
                 className: 'text-right', // Alinea el contenido de la celda a la derecha
                 render: function(data, type, row) {
-                    return parseFloat(data).toLocaleString('en', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
+                    if (data === null || data === undefined) {
+                        return '0.00'; // Muestra 0.00 si el valor es null o undefined
+                    } else {
+                        return parseFloat(data).toLocaleString('en', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+                    }
+                    return data === null || data === undefined ? 0 : parseFloat(data);
+
                 }
             });
             setTimeout(function() {
@@ -237,9 +249,7 @@
                 ajax: {
                     url: '{!! $ajaxUrl !!}',
                     data: function(d) {
-                        d.genero = $('#genero').val(); // Valor del primer combo box
-                        d.startDate = $('#startDate').val();
-                        d.endDate = $('#endDate').val();
+                        d.cuenta = $('#cbo-cuenta').val(); // Valor del primer combo box
                     }
                 },
                 columns: initialColumns,
@@ -394,6 +404,11 @@
             $('.dt-buttons div').css({
                 'padding': '5px',
                 'display': 'inline-block' // Esto garantiza que el padding se aplique correctamente
+            });
+
+            $('#cbo-cuenta').on('change', function() {
+                var tabla = $('#data-table').DataTable();
+                tabla.ajax.reload(); // Recarga la tabla manteniendo la posición de paginación actual
             });
 
             //FILTROS

@@ -14,6 +14,7 @@ class Cuenta extends Model
         'nombre_cuenta',
         'prioridad',
         'descripcion',
+        'es_presupuesto',
         'limite',
         'alerta'
     ];

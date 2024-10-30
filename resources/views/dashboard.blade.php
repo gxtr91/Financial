@@ -150,8 +150,13 @@
             $('#abrirModal').click(function() {
                 $('#modal-block-fadein').modal('show');
             });
+
             $('#addAccountForm').on('submit', function(event) {
                 event.preventDefault(); // Previene el comportamiento por defecto del formulario
+
+                // Cambiar texto y deshabilitar el botón de guardar
+                const $submitButton = $(this).find('button[type="submit"]');
+                $submitButton.prop('disabled', true).text('Espere...');
 
                 // Limpiar mensajes de error previos
                 $('.form-control').removeClass('is-invalid');
@@ -163,11 +168,14 @@
                     data: $(this).serialize(),
                     success: function(response) {
                         if (response.success) {
-                            // Cerrar el modal si la cuenta fue agregada exitosamente
+                            // Cerrar el modal si la transacción fue agregada exitosamente
                             $('#modal-block-fadein').modal('hide');
                             // Limpiar el formulario
                             $('#addAccountForm')[0].reset();
-                            alert('Transaccion agregada con exito.');
+                            alert('Transacción agregada con éxito.');
+
+                            // Recargar la página después de cerrar el modal
+                            location.reload();
                         } else {
                             alert('Hubo un error al agregar la cuenta.');
                         }
@@ -180,8 +188,19 @@
                             $('#' + field).after('<div class="invalid-feedback">' +
                                 messages[0] + '</div>');
                         });
+                    },
+                    complete: function() {
+                        // Restaurar el texto y habilitar el botón de guardar
+                        $submitButton.prop('disabled', false).text('Guardar');
                     }
                 });
+            });
+
+            // Recargar la página al cerrar el modal si se ha agregado una transacción
+            $('#modal-block-fadein').on('hidden.bs.modal', function() {
+                if ($('#addAccountForm')[0].checkValidity()) {
+                    location.reload();
+                }
             });
         });
     </script>

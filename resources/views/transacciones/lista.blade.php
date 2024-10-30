@@ -258,7 +258,6 @@
                 locale: "es" // Para español
             };
 
-            // Inicializar Flatpickr en los campos de entrada
             const fechaInicio = flatpickr("#startDate", {
                 ...opcionesFlatpickr,
                 onChange: function(selectedDates, dateStr, instance) {
@@ -290,30 +289,57 @@
                         previous: "Ant"
                     }
                 },
-                header: true, // Enable custom header styles
-                "initComplete": function(settings, json) {
-                    $('#data-table').css('visibility', 'visible'); // Muestra la tabla
+                header: true,
+                initComplete: function(settings, json) {
+                    $('#data-table').css('visibility', 'visible');
                     $('#data-table thead th').css({
-                        "background-color": "rgba(48, 138, 90, 0.8)", // Color de fondo con transparencia
-                        "height": "30px", // Reduce la altura a 30px
-                        "font-size": "14px", // Tamaño de texto
-                        "color": "white", // Color del texto
-                        "width": "auto" // Ancho automático
+                        "background-color": "rgba(48, 138, 90, 0.8)",
+                        "height": "30px",
+                        "font-size": "14px",
+                        "color": "white",
+                        "width": "auto"
                     });
                 },
                 order: [
                     [0, "desc"]
-                ], // Sort by the second column in descending order
+                ],
                 processing: true,
                 serverSide: true,
-                responsive: true,
+                responsive: {
+                    details: {
+                        type: 'column',
+                        target: -1
+                    }
+                },
                 searching: true,
                 ordering: true,
                 pageLength: 100,
                 columnDefs: [{
-                    orderable: false,
-                    targets: [1, 2, 4]
-                }, ],
+                        orderable: false,
+                        targets: [1, 2, 4]
+                    },
+                    {
+                        responsivePriority: 1,
+                        targets: 0 // Fecha - Siempre visible en móvil
+                    },
+                    {
+                        responsivePriority: 2,
+                        targets: 1 // Nombre de la cuenta - Siempre visible en móvil
+                    },
+                    {
+                        responsivePriority: 3,
+                        targets: 3 // Monto - Siempre visible en móvil
+                    },
+                    {
+                        responsivePriority: 4,
+                        targets: 2 // Descripción - Visible en móvil si hay espacio
+                    },
+                    {
+                        targets: -1, // Última columna
+                        visible: true, // Asegura que las columnas visibles en móvil estén siempre al frente
+                        responsivePriority: 5 // Usuario - Visible en móvil si hay espacio
+                    }
+                ],
                 ajax: {
                     url: "{{ route('transacciones.json') }}",
                     data: function(d) {
@@ -323,7 +349,6 @@
                         d.endDate = $('#endDate').val();
                     }
                 },
-
                 columns: [{
                         data: 'fecha',
                         name: 'fecha'
@@ -339,7 +364,7 @@
                     {
                         data: 'monto',
                         name: 'monto',
-                        className: 'text-right', // Alinea el contenido de la celda a la derecha
+                        className: 'text-right',
                         render: function(data, type, row) {
                             return parseFloat(data).toLocaleString('en', {
                                 minimumFractionDigits: 2,
@@ -350,13 +375,11 @@
                     {
                         data: 'usuario.name',
                         name: 'user'
-                    },
+                    }
                 ],
                 dom: 'Bfrtip',
                 drawCallback: function() {
                     var api = this.api();
-
-                    // Calcula la suma de la última columna para todas las páginas
                     var total = api.column(api.columns().count() - 2).data().reduce(function(a, b) {
                         return parseFloat(a) + parseFloat(b);
                     }, 0);
@@ -364,59 +387,49 @@
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                     });
-                    // Muestra el total en el elemento con ID 'total'
                     $('#total').html('Total consumo: L ' + totalFormateado);
                 },
-
             });
+
             $('.dt-buttons').append('<div style="font-weight:bold" id="total"></div>');
-            var tabla = $('#data-table').DataTable();
             $('.dt-buttons div').css({
                 'padding': '5px',
-                'display': 'inline-block' // Esto garantiza que el padding se aplique correctamente
+                'display': 'inline-block'
             });
+
             $('#cbo-cuenta, #cbo-usuario, #startDate, #endDate').on('change', function() {
-                var tabla = $('#data-table').DataTable();
-                tabla.ajax.reload(); // Recarga la tabla manteniendo la posición de paginación actual
+                tabla.ajax.reload();
             });
 
             $('#btn-limpiar-filtros').on('click', function() {
-                // Restablece los valores de tus combo boxes
                 $('#cbo-cuenta').val('');
                 $('#cbo-usuario').val('');
                 $('#startDate').val('');
                 $('#endDate').val('');
-
-
-                // Aquí asumimos que estás usando DataTables de jQuery
-                var tabla = $('#data-table').DataTable();
                 tabla.search('').columns().search('').draw();
             });
-            //Modal
+
             $('#abrirModal').click(function() {
                 $('#modal-block-fadein').modal('show');
             });
-            $('#addAccountForm').on('submit', function(event) {
-                event.preventDefault(); // Previene el comportamiento por defecto del formulario
 
-                // Limpiar mensajes de error previos
+            $('#addAccountForm').on('submit', function(event) {
+                event.preventDefault();
+                const $submitButton = $(this).find('button[type="submit"]');
+                $submitButton.prop('disabled', true).text('Espere...');
                 $('.form-control').removeClass('is-invalid');
                 $('.invalid-feedback').remove();
 
                 $.ajax({
-                    url: '{{ route('transacciones.store') }}', // Ruta para agregar cuenta
+                    url: '{{ route('transacciones.store') }}',
                     method: 'POST',
                     data: $(this).serialize(),
                     success: function(response) {
                         if (response.success) {
-                            // Cerrar el modal si la cuenta fue agregada exitosamente
                             $('#modal-block-fadein').modal('hide');
-                            // Limpiar el formulario
                             $('#addAccountForm')[0].reset();
-                            $('#data-table').DataTable().ajax.reload(null,
-                                false); // Recargar sin reiniciar paginación
-
-                            alert('Transaccion agregada con exito.');
+                            $('#data-table').DataTable().ajax.reload(null, false);
+                            alert('Transacción agregada con éxito.');
                         } else {
                             alert('Hubo un error al agregar la cuenta.');
                         }
@@ -424,17 +437,16 @@
                     error: function(response) {
                         let errors = response.responseJSON.errors;
                         $.each(errors, function(field, messages) {
-                            // Mostrar errores de validación
                             $('#' + field).addClass('is-invalid');
-                            $('#' + field).after(
-                                '<div class="invalid-feedback">' +
+                            $('#' + field).after('<div class="invalid-feedback">' +
                                 messages[0] + '</div>');
                         });
+                    },
+                    complete: function() {
+                        $submitButton.prop('disabled', false).text('Guardar');
                     }
                 });
             });
-
-
         });
     </script>
 @endpush
