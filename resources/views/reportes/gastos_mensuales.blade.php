@@ -259,14 +259,41 @@
                 ], // Sort by the second column in descending order
                 processing: true,
                 serverSide: true,
-                responsive: true,
-                searching: false,
+                responsive: {
+                    details: {
+                        type: 'column',
+                        target: -1
+                    }
+                },
+                searching: true,
                 ordering: true,
                 pageLength: 100,
                 columnDefs: [{
-                    orderable: false,
-                    targets: [1, 2, 3]
-                }, ],
+                        orderable: false,
+                        targets: [1, 2, 4]
+                    },
+                    {
+                        responsivePriority: 1,
+                        targets: 0
+                    },
+                    {
+                        responsivePriority: 2,
+                        targets: 2
+                    },
+                    {
+                        responsivePriority: 3,
+                        targets: 3
+                    },
+                    {
+                        responsivePriority: 4,
+                        targets: 4
+                    },
+                    {
+                        targets: -1, // Última columna
+                        visible: true, // Asegura que las columnas visibles en móvil estén siempre al frente
+                        responsivePriority: 5 // Usuario - Visible en móvil si hay espacio
+                    }
+                ],
                 ajax: {
                     url: "{{ route('reportes.json_gastos_mensuales') }}",
                 },
