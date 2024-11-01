@@ -224,8 +224,6 @@
 
     <script>
         $(document).ready(function() {
-
-
             var tabla = $('#data-table').DataTable({
                 language: {
                     search: "Buscar:",
@@ -243,28 +241,23 @@
                         previous: "Ant"
                     }
                 },
-                header: true, // Enable custom header styles
-                "initComplete": function(settings, json) {
-                    $('#data-table').css('visibility', 'visible'); // Muestra la tabla
+                header: true,
+                initComplete: function(settings, json) {
+                    $('#data-table').css('visibility', 'visible');
                     $('#data-table thead th').css({
-                        "background-color": "rgba(48, 138, 90, 0.8)", // Color de fondo con transparencia
-                        "height": "30px", // Reduce la altura a 30px
-                        "font-size": "14px", // Tamaño de texto
-                        "color": "white", // Color del texto
-                        "width": "auto" // Ancho automático
+                        "background-color": "rgba(48, 138, 90, 0.8)",
+                        "height": "30px",
+                        "font-size": "14px",
+                        "color": "white",
+                        "width": "auto"
                     });
                 },
                 order: [
                     [3, "desc"]
-                ], // Sort by the second column in descending order
+                ],
                 processing: true,
                 serverSide: true,
-                responsive: {
-                    details: {
-                        type: 'column',
-                        target: -1
-                    }
-                },
+                responsive: true,
                 searching: true,
                 ordering: true,
                 pageLength: 100,
@@ -275,29 +268,28 @@
                     {
                         responsivePriority: 1,
                         targets: 0
-                    },
+                    }, // Nombre de cuenta - siempre visible
                     {
                         responsivePriority: 2,
                         targets: 2
-                    },
+                    }, // Límite - siempre visible
                     {
                         responsivePriority: 3,
                         targets: 3
-                    },
+                    }, // Gasto actual - siempre visible
                     {
                         responsivePriority: 4,
                         targets: 4
-                    },
+                    }, // Saldo disponible - siempre visible
                     {
-                        targets: -1, // Última columna
-                        visible: true, // Asegura que las columnas visibles en móvil estén siempre al frente
-                        responsivePriority: 5 // Usuario - Visible en móvil si hay espacio
+                        targets: -1,
+                        visible: true,
+                        responsivePriority: 5
                     }
                 ],
                 ajax: {
-                    url: "{{ route('reportes.json_gastos_mensuales') }}",
+                    url: "{{ route('reportes.json_gastos_mensuales') }}"
                 },
-
                 columns: [{
                         data: 'nombre_cuenta',
                         name: 'nombre_cuenta'
@@ -309,7 +301,7 @@
                     {
                         data: 'limite',
                         name: 'limite',
-                        className: 'text-right', // Alinea el contenido de la celda a la derecha
+                        className: 'text-right',
                         render: function(data, type, row) {
                             return parseFloat(data).toLocaleString('en', {
                                 minimumFractionDigits: 2,
@@ -317,11 +309,10 @@
                             });
                         }
                     },
-
                     {
                         data: 'sumatoria_transacciones',
                         name: 'sumatoria_transacciones',
-                        className: 'text-right', // Alinea el contenido de la celda a la derecha
+                        className: 'text-right',
                         render: function(data, type, row) {
                             return parseFloat(data).toLocaleString('en', {
                                 minimumFractionDigits: 2,
@@ -334,15 +325,11 @@
                         name: 'saldo_disponible',
                         className: 'text-right',
                         render: function(data, type, row) {
-                            // Convertir el valor a un número flotante
                             var saldo = parseFloat(data);
-                            // Aplicar formato local
                             var formatted = saldo.toLocaleString('en', {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2
                             });
-
-                            // Condición para chequear si el saldo es menor o igual a cero
                             if (saldo <= 0) {
                                 return '<span style="font-weight:bold; color:red;">' + formatted +
                                     '</span>';
@@ -350,41 +337,25 @@
                                 return '<span style="font-weight:bold; color:green;">' + formatted +
                                     '</span>';
                             }
-
                         }
-                    },
-
-
-
+                    }
                 ],
                 footerCallback: function(row, data, start, end, display) {
                     var api = this.api();
-
-                    // Calcular el total de la columna de Sumatoria de Transacciones
-
-                    // Calcular el total de la columna de Saldo Disponible
-                    var totalSaldo = api
-                        .column(3, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce(function(a, b) {
-                            return parseFloat(a) + parseFloat(b);
-                        }, 0);
-                    var totalSaldo = parseFloat(totalSaldo);
-                    // Aplicar formato local
+                    var totalSaldo = api.column(3, {
+                        page: 'current'
+                    }).data().reduce(function(a, b) {
+                        return parseFloat(a) + parseFloat(b);
+                    }, 0);
                     var formatted = totalSaldo.toLocaleString('en', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                     });
-                    // Actualizar el pie de tabla
                     $(api.column(3).footer()).html('Gasto actual: L ' + formatted);
-
                 },
                 dom: 'Bfrtip',
                 drawCallback: function() {
                     var api = this.api();
-                    // Calcula la suma de la última columna para todas las páginas
                     var total = api.column(api.columns().count() - 3).data().reduce(function(a, b) {
                         return parseFloat(a) + parseFloat(b);
                     }, 0);
@@ -392,45 +363,34 @@
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                     });
-                    // Muestra el total en el elemento con ID 'total'
                     $('#total').html('Presupuesto: L ' + totalFormateado);
-                },
-
-
-
+                }
             });
+
             $('.dt-buttons').append('<div style="font-weight:bold" id="total"></div>');
-            var tabla = $('#data-table').DataTable();
             $('.dt-buttons div').css({
                 'padding': '5px',
-                'display': 'inline-block' // Esto garantiza que el padding se aplique correctamente
+                'display': 'inline-block'
             });
 
-            //Modal
             $('#abrirModal').click(function() {
                 $('#modal-block-fadein').modal('show');
             });
             $('#addAccountForm').on('submit', function(event) {
-                event.preventDefault(); // Previene el comportamiento por defecto del formulario
-
-                // Limpiar mensajes de error previos
+                event.preventDefault();
                 $('.form-control').removeClass('is-invalid');
                 $('.invalid-feedback').remove();
 
                 $.ajax({
-                    url: '{{ route('transacciones.store') }}', // Ruta para agregar cuenta
+                    url: '{{ route('transacciones.store') }}',
                     method: 'POST',
                     data: $(this).serialize(),
                     success: function(response) {
                         if (response.success) {
-                            // Cerrar el modal si la cuenta fue agregada exitosamente
                             $('#modal-block-fadein').modal('hide');
-                            // Limpiar el formulario
                             $('#addAccountForm')[0].reset();
-                            $('#data-table').DataTable().ajax.reload(null,
-                                false); // Recargar sin reiniciar paginación
-
-                            alert('Transaccion agregada con exito.');
+                            $('#data-table').DataTable().ajax.reload(null, false);
+                            alert('Transacción agregada con éxito.');
                         } else {
                             alert('Hubo un error al agregar la cuenta.');
                         }
@@ -438,16 +398,13 @@
                     error: function(response) {
                         let errors = response.responseJSON.errors;
                         $.each(errors, function(field, messages) {
-                            // Mostrar errores de validación
                             $('#' + field).addClass('is-invalid');
-                            $('#' + field).after(
-                                '<div class="invalid-feedback">' +
+                            $('#' + field).after('<div class="invalid-feedback">' +
                                 messages[0] + '</div>');
                         });
                     }
                 });
             });
-
         });
     </script>
 @endpush

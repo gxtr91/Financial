@@ -243,8 +243,25 @@
                 pageLength: 100,
                 columnDefs: [{
                         orderable: false,
-                        targets: [3]
-                    } // Habilitar el ordenamiento solo para la columna 1 (cambiar según tus necesidades)
+                        targets: [1, 2]
+                    },
+                    {
+                        responsivePriority: 1,
+                        targets: 0
+                    }, // Nombre de cuenta - siempre visible
+                    {
+                        responsivePriority: 2,
+                        targets: 2
+                    }, // Límite - siempre visible
+                    {
+                        responsivePriority: 3,
+                        targets: 3
+                    }, // Gasto actual - siempre visible
+                    {
+                        responsivePriority: 4,
+                        targets: 4
+                    }, // Saldo disponible - siempre visible
+
                 ],
                 ajax: {
                     url: '{!! $ajaxUrl !!}',
