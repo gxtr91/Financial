@@ -4,45 +4,10 @@
         <i class="fa fa-fw fa-money-bill-1 me-1"></i> Agregar transacción
     </button>
     <div class="content">
-        <div class="row justify-content-between align-items-center py-3 pt-md-3 pb-md-0">
-            <div class="col-md-6">
-                <h2 class="content-heading">
-                    <i class="fa fa-angle-right text-muted me-1"></i> Últimas transacciones
-                </h2>
-            </div>
-            <div class="col-md-6 d-md-flex justify-content-end align-items-center">
-                <div class="col-md-6 mb-1">
-                    <div id="fechas">
-                        <div class="input-daterange input-group js-datepicker-enabled" data-date-format="dd/mm/yyyy"
-                            data-week-start="1" data-autoclose="true" data-today-highlight="true">
-                            <input type="text" class="form-control" id="startDate" placeholder="Fecha inicial">
-                            <span class="input-group-text fw-semibold">
-                                <i class="fa fa-fw fa-arrow-right"></i>
-                            </span>
-                            <input type="text" class="form-control" id="endDate" placeholder="Fecha final">
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group col-md-3 mb-1 ms-md-3">
-                    <select class="js-select2 form-select" id="cbo-cuenta" name="cbo-cuenta" style="width: 100%;">
-                        <option value="">::. Cuentas .::</option>
-                        @foreach ($cuentas as $cuenta)
-                            <option value="{{ $cuenta->id }}">{{ $cuenta->nombre_cuenta }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="form-group col-md-3 mb-1 ms-md-3">
-                    <select class="js-select2 form-select" id="cbo-usuario" name="cbo-usuario" style="width: 100%;">
-                        <option value="">::. Usuarios .::</option>
-                        @foreach ($usuarios as $usuario)
-                            <option value="{{ $usuario->id }}">{{ $usuario->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="form-group col-md-2 mb-1 ms-md-3">
-                    <button id="btn-limpiar-filtros" class="btn btn-secondary" type="button">Limpiar filtros</button>
-                </div>
-            </div>
+        <div class="d-flex justify-content-end mb-3">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
+                <i class="fa fa-filter me-1"></i> Filtrar
+            </button>
         </div>
         <div class="block block-rounded">
             <div class="tab-pane fade active show" id="btabs-animated-fade-home" role="tabpanel"
@@ -96,6 +61,10 @@
                             <input type="number" class="form-control" id="monto" name="monto" step="0.01"
                                 required>
                         </div>
+                        <div class="form-group">
+                            <label for="fecha">Fecha</label>
+                            <input type="date" class="form-control" id="fecha" name="fecha" required>
+                        </div>
 
                     </div>
                     <div class="block-content block-content-full text-end bg-body">
@@ -108,6 +77,53 @@
         </div>
     </div>
     <!--end modal -->
+    <!-- Modal de Filtros -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterModalLabel">Filtrar Transacciones</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Filtros aquí -->
+                    <div id="fechas">
+                        <div class="input-daterange input-group js-datepicker-enabled" data-date-format="dd/mm/yyyy"
+                            data-week-start="1" data-autoclose="true" data-today-highlight="true">
+                            <input type="text" class="form-control" id="startDate" placeholder="Fecha inicial">
+                            <span class="input-group-text fw-semibold">
+                                <i class="fa fa-fw fa-arrow-right"></i>
+                            </span>
+                            <input type="text" class="form-control" id="endDate" placeholder="Fecha final">
+                        </div>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="cbo-cuenta">Cuenta</label>
+                        <select class="js-select2 form-select" id="cbo-cuenta" name="cbo-cuenta">
+                            <option value="">::. Cuentas .::</option>
+                            @foreach ($cuentas as $cuenta)
+                                <option value="{{ $cuenta->id }}">{{ $cuenta->nombre_cuenta }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="cbo-usuario">Usuario</label>
+                        <select class="js-select2 form-select" id="cbo-usuario" name="cbo-usuario">
+                            <option value="">::. Usuarios .::</option>
+                            @foreach ($usuarios as $usuario)
+                                <option value="{{ $usuario->id }}">{{ $usuario->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-limpiar-filtros" class="btn btn-secondary" type="button">Limpiar filtros</button>
+                    <button id="btn-aplicar-filtros" class="btn btn-primary" type="button"
+                        data-bs-dismiss="modal">Aplicar filtros</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @push('css')
     <!-- TNS -->
@@ -247,6 +263,9 @@
 
     <script>
         $(document).ready(function() {
+            const fechaInput = document.getElementById("fecha");
+            const hoy = new Date().toISOString().split("T")[0];
+            fechaInput.value = hoy;
             setTimeout(function() {
                 document.getElementById('fechas').style.display = 'block';
             }, 500);
@@ -301,7 +320,7 @@
                     });
                 },
                 order: [
-                    [0, "desc"]
+                    [0, 'desc']
                 ],
                 processing: true,
                 serverSide: true,

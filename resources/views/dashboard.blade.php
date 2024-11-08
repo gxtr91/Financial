@@ -122,6 +122,10 @@
                             <input type="number" class="form-control" id="monto" name="monto" step="0.01"
                                 required>
                         </div>
+                        <div class="form-group">
+                            <label for="fecha">Fecha</label>
+                            <input type="date" class="form-control" id="fecha" name="fecha" required>
+                        </div>
 
                     </div>
                     <div class="block-content block-content-full text-end bg-body">
@@ -147,6 +151,9 @@
 
     <script>
         $(document).ready(function() {
+            const fechaInput = document.getElementById("fecha");
+            const hoy = new Date().toISOString().split("T")[0];
+            fechaInput.value = hoy;
             $('#abrirModal').click(function() {
                 $('#modal-block-fadein').modal('show');
             });

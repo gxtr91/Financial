@@ -39,7 +39,7 @@ class TransaccionesController extends Controller
         if ($request->filled('startDate') && $request->filled('endDate')) {
             $query->whereBetween('fecha', [$request->startDate, $request->endDate]);
         }
-        $query->orderBy('id', 'desc');
+        $query->orderBy('fecha', 'desc');
 
         $cuentas = $query->get();
         return Datatables::of($cuentas)
@@ -54,6 +54,7 @@ class TransaccionesController extends Controller
             'cuenta' => 'required|string|max:255',
             'descripcion' => 'required|string',
             'monto' => 'required|numeric|min:0',
+            'fecha' => 'required',
         ]);
 
         // Crear la nueva cuenta
@@ -62,6 +63,7 @@ class TransaccionesController extends Controller
             'id_user' =>  $usuario->id,
             'descripcion' => $request->descripcion,
             'monto' => $request->monto,
+            'fecha' => $request->fecha,
         ]);
 
 

@@ -1,5 +1,8 @@
 @extends('layouts.backend')
 @section('content')
+    <button type="button" class="btn btn-lg rounded-0 btn-hero btn-primary me-1 mb-3" id="abrirModal">
+        <i class="fa fa-fw fa-money-bill-1 me-1"></i> Agregar transacción
+    </button>
     <!-- Page Content -->
     <div class="content">
         <div class="row justify-content-between align-items-center py-3 pt-md-3 pb-md-0">
@@ -8,20 +11,9 @@
                     <i class="fa fa-angle-right text-muted me-1"></i> Lista de cuentas y presupuestos
                 </h2>
             </div>
-            <div class="col-md-6 d-md-flex justify-content-end align-items-center">
 
-                <div class="form-group col-md-3 mb-1 ms-md-3">
-                    <select class="js-select2 form-select" id="cbo-cuenta" name="cbo-cuenta" style="width: 100%;">
-                        <option value="">::. Todas las cuentas .::</option>
-                        <option value="si">Cuentas del presupuesto</option>
-                    </select>
-                </div>
-            </div>
         </div>
-
-
         <div class="block block-rounded">
-
 
             <div class="tab-pane fade active show" id="btabs-animated-fade-home" role="tabpanel"
                 aria-labelledby="btabs-animated-fade-home-tab" tabindex="0">
@@ -29,12 +21,7 @@
                     <x-data-table id="cuentas-table" ajax-url="{{ route('cuentas.json') }}" :columns="$columns"
                         :json-columns="$json" :nuevo-boton="true" />
                 </div>
-
-
             </div>
-
-
-
         </div>
         <!-- END Page Content -->
         <!--start modal -->
@@ -91,11 +78,63 @@
         </div>
     </div>
     <!--end modal -->
+    <!-- Modal -->
+    <div class="modal fade" id="modal-block-transaccion" tabindex="-1" aria-labelledby="modal-block-transaccion"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addAccountModalLabel">Nueva transaccion</h5>
+
+                </div>
+                <form id="addAccountForm" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="nombre_cuenta">Seleccione la Cuenta</label>
+                            <div class="form-group col-12 ">
+                                <select class="js-select2 form-select" id="cuenta" name="cuenta" style="width: 100%;">
+                                    <option value="">::. Seleccione la cuenta .::</option>
+                                    @foreach ($cuentas as $cuenta)
+                                        <option value="{{ $cuenta->id }}">{{ $cuenta->nombre_cuenta }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="descripcion">Descripción</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="limite">Monto</label>
+                            <input type="number" class="form-control" id="monto" name="monto" step="0.01"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha">Fecha</label>
+                            <input type="date" class="form-control" id="fecha" name="fecha" required>
+                        </div>
+
+                    </div>
+                    <div class="block-content block-content-full text-end bg-body">
+                        <button type="button" class="btn btn-sm btn-alt-secondary"
+                            data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--end modal -->
 @endsection
 @push('js')
     <script>
         $(document).ready(function() {
+            const fechaInput = document.getElementById("fecha");
+            const hoy = new Date().toISOString().split("T")[0];
+            fechaInput.value = hoy;
             $('#addAccountForm').on('submit', function(event) {
+
                 event.preventDefault(); // Previene el comportamiento por defecto del formulario
 
                 // Cambiar texto y deshabilitar el botón de guardar
@@ -143,6 +182,40 @@
             const btn = document.getElementById("add-active");
             $("#active").on("click", function() {
                 $("#presupuesto").fadeToggle("medium");
+            });
+
+            //Insertar transaccion
+            $('#abrirModal').click(function() {
+                $('#modal-block-transaccion').modal('show');
+            });
+            $('#addAccountForm').on('submit', function(event) {
+                event.preventDefault();
+                $('.form-control').removeClass('is-invalid');
+                $('.invalid-feedback').remove();
+
+                $.ajax({
+                    url: '{{ route('transacciones.store') }}',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            $('#modal-block-fadein').modal('hide');
+                            $('#addAccountForm')[0].reset();
+                            $('#data-table').DataTable().ajax.reload(null, false);
+                            alert('Transacción agregada con éxito.');
+                        } else {
+                            alert('Hubo un error al agregar la cuenta.');
+                        }
+                    },
+                    error: function(response) {
+                        let errors = response.responseJSON.errors;
+                        $.each(errors, function(field, messages) {
+                            $('#' + field).addClass('is-invalid');
+                            $('#' + field).after('<div class="invalid-feedback">' +
+                                messages[0] + '</div>');
+                        });
+                    }
+                });
             });
 
         });

@@ -18,14 +18,9 @@ class Transaccion extends Model
         'id_user',
         'monto',
         'descripcion',
-        'fecha',
+        'fecha'
     ];
 
-
-    public function getFechaAttribute($value)
-    {
-        return Carbon::parse($value)->format('d/m/Y');
-    }
 
     public function cuenta()
     {

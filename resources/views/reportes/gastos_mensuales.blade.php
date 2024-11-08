@@ -73,6 +73,10 @@
                             <input type="number" class="form-control" id="monto" name="monto" step="0.01"
                                 required>
                         </div>
+                        <div class="form-group">
+                            <label for="fecha">Fecha</label>
+                            <input type="date" class="form-control" id="fecha" name="fecha" required>
+                        </div>
 
                     </div>
                     <div class="block-content block-content-full text-end bg-body">
@@ -224,6 +228,9 @@
 
     <script>
         $(document).ready(function() {
+            const fechaInput = document.getElementById("fecha");
+            const hoy = new Date().toISOString().split("T")[0];
+            fechaInput.value = hoy;
             var tabla = $('#data-table').DataTable({
                 language: {
                     search: "Buscar:",
@@ -330,11 +337,16 @@
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2
                             });
-                            if (saldo <= 0) {
+                            if (saldo < 0) {
                                 return '<span style="font-weight:bold; color:red;">' + formatted +
                                     '</span>';
-                            } else {
+                            }
+                            if (saldo > 0) {
                                 return '<span style="font-weight:bold; color:green;">' + formatted +
+                                    '</span>';
+                            } else {
+                                return '<span style="font-weight:bold; color:orange;">' +
+                                    formatted +
                                     '</span>';
                             }
                         }
