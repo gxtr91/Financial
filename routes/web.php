@@ -1,15 +1,13 @@
 <?php
 
+use App\Http\Controllers\CronJobsController;
 use App\Http\Controllers\CuentasController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\TransaccionesController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\NotaController;
-
-
-
 
 
 Route::get('/', function () {
@@ -53,12 +51,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/json', [NotaController::class, 'json'])->name('json');
         Route::put('/{id}', [NotaController::class, 'update'])->name('update');
         Route::delete('/{id}', [NotaController::class, 'destroy'])->name('destroy');
-
         Route::post('/{id}/estado', [NotaController::class, 'markAsCompleted'])->name('markAsCompleted');
         Route::get('/{id}', [NotaController::class, 'show'])->name('show');
-
     });
     Route::get('/actividades', [NotaController::class, 'index'])->name('diarias');
+});
+
+
+//CronJobs
+// Enviar notificaciones de notas 8/10 AM 2/4PM
+Route::prefix('cronJobs')->name('cronJobs.')->group(function () {
+    Route::get('/notas', [CronJobsController::class, 'notas'])->name('notas');
 });
 
 require __DIR__.'/auth.php';

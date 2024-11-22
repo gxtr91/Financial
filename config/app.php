@@ -2,6 +2,11 @@
 
 return [
 
+    //CronJob Token
+
+    'cron_job_token' => env('CRON_JOB_TOKEN', 'default_token'),
+
+
     /*
     |--------------------------------------------------------------------------
     | Application Name
