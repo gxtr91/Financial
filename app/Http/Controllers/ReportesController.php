@@ -37,8 +37,10 @@ class ReportesController extends Controller
         ->leftJoin('transacciones', function($join) {
             $join->on('cuentas.id', '=', 'transacciones.id_cuenta')
                  ->whereMonth('transacciones.fecha', Carbon::now()->month)
-                 ->whereYear('transacciones.fecha', Carbon::now()->year);
+                 ->whereYear('transacciones.fecha', Carbon::now()->year)
+                 ->orderBy('limite','desc');
         })
+
         ->groupBy('cuentas.id','cuentas.descripcion','cuentas.nombre_cuenta', 'cuentas.limite');
 
     return DataTables::of($cuentas)

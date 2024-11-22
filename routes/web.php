@@ -6,6 +6,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\TransaccionesController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NotaController;
+
 
 
 
@@ -44,6 +46,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/gastos_mensuales', ReportesController::class)->name('gastos_mensuales');
         Route::get('/json_gastos_mensuales', [ReportesController::class, 'json'])->name('json_gastos_mensuales');
     });
+
+    Route::prefix('notas')->name('notas.')->group(function () {
+        Route::get('/', [NotaController::class, 'index'])->name('index');
+        Route::post('/', [NotaController::class, 'store'])->name('store');
+        Route::get('/json', [NotaController::class, 'json'])->name('json');
+        Route::put('/{id}', [NotaController::class, 'update'])->name('update');
+        Route::delete('/{id}', [NotaController::class, 'destroy'])->name('destroy');
+
+        Route::post('/{id}/estado', [NotaController::class, 'markAsCompleted'])->name('markAsCompleted');
+        Route::get('/{id}', [NotaController::class, 'show'])->name('show');
+
+    });
+    Route::get('/actividades', [NotaController::class, 'index'])->name('diarias');
 });
 
 require __DIR__.'/auth.php';

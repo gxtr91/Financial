@@ -273,6 +273,14 @@
                             </a>
                         </li>
                         <li class="nav-main-item">
+                            <a class="nav-main-link{{ request()->is('notas') ? ' active' : '' }}" href="/notas">
+                                <i class="nav-main-link-icon far  fa-note-sticky"></i>
+                                <span class="nav-main-link-name">Notas</span>
+                            </a>
+                        </li>
+
+
+                        <li class="nav-main-item">
                             <a class="nav-main-link{{ request()->is('transacciones') ? ' active' : '' }}"
                                 href="/transacciones">
                                 <i class="nav-main-link-icon far  fa-credit-card"></i>
