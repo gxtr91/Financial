@@ -11,7 +11,7 @@ use GuzzleHttp\Client;
 class CronJobsController extends Controller
 {
 
-    private function sendTelegram($notas)
+    private function sendTelegram($msg)
     {
         $client = new Client();
         $url = "https://api.telegram.org/bot" . env('TELEGRAM_BOT_TOKEN') . "/sendMessage";
@@ -19,7 +19,7 @@ class CronJobsController extends Controller
         $response = $client->post($url, [
             'form_params' => [
                 'chat_id' => env('TELEGRAM_CHANNEL_ID'),
-                'text' => "<b>❗Recordatorio de actividades pendientes❗</b>\n\n" . $notas,
+                'text' => $msg,
                 'parse_mode' => 'HTML'
             ]
         ]);
@@ -43,8 +43,13 @@ class CronJobsController extends Controller
         $mensaje = "";
         $x=1;
         foreach ($notas as $nota) {
-            $mensaje .= "<b>".$x."-". $nota['titulo'] . "</b>\n"; // <b> para negrita y \n para una nueva línea
+            $mensaje .= "<b>".$x."-". $nota['titulo'] . ".</b>\n"; // <b> para negrita y \n para una nueva línea
             $x++;
+        }
+        if ($mensaje==""){
+            $mensaje="<b>✅ Se han completado las actividades del día.</b>";
+        }else{
+            $mensaje="<b>❗Recordatorio de actividades pendientes❗</b>\n\n" . $mensaje;
         }
         $this->sendTelegram($mensaje);
         //return  response()->json($notas);
