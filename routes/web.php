@@ -62,6 +62,8 @@ Route::middleware('auth')->group(function () {
 // Enviar notificaciones de notas 8/10 AM 2/4PM
 Route::prefix('cronJobs')->name('cronJobs.')->group(function () {
     Route::get('/notas', [CronJobsController::class, 'notas'])->name('notas');
+    Route::get('/correr-notas', [CronJobsController::class, 'correrNotas'])->name('correr-notas');
+
 });
 
 require __DIR__.'/auth.php';
