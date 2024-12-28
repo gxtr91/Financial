@@ -1,8 +1,9 @@
 @extends('layouts.backend')
 
 @section('content')
-    <button type="button" class="btn btn-lg rounded-0 btn-hero btn-primary me-1 mb-3" id="abrirModal">
-        <i class="fa fa-fw fa-money-bill-1 me-1"></i> Agregar transacción
+    <button type="button" class="btn btn-primary btn-floating" id="abrirModal"
+        style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background-color: #28a745; display: flex; justify-content: center; align-items: center; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);">
+        <i class="fa fa-plus" style="font-size: 24px; color: #fff;"></i>
     </button>
     <div class="content">
 
@@ -97,7 +98,6 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addAccountModalLabel">Nueva transaccion</h5>
-
                 </div>
                 <form id="addAccountForm" method="POST">
                     @csrf
@@ -141,7 +141,26 @@
 @endsection
 @push('css')
     <style>
+        .btn-floating {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #28a745;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
 
+        .btn-floating:hover {
+            background-color: #218838;
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+        }
     </style>
 @endpush
 

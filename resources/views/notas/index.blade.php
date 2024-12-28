@@ -1,9 +1,10 @@
 @extends('layouts.backend')
 @section('content')
-    <button onclick="openNotaModal()" type="button" class="btn btn-lg rounded-0 btn-hero btn-primary me-1 mb-3"
-        id="abrirModal">
-        <i class="fa fa-fw fa-plus me-1"></i> Agregar Nota
+    <button onclick="openNotaModal()" type="button" class="btn btn-primary btn-floating" id="abrirModal"
+        style="z-index:100; position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background-color: #28a745; display: flex; justify-content: center; align-items: center; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);">
+        <i class="fa fa-plus" style="font-size: 24px; color: #fff;"></i>
     </button>
+
     <div class="content">
         <div class="d-flex justify-content-end mb-3">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
@@ -78,11 +79,9 @@
                                     onchange="updateResponsablePhoto()">
                                     <option value="" data-photo="https://via.placeholder.com/40">Selecciona un
                                         Responsable</option>
-                                    <option value="1"
-                                        data-photo="https://scontent.ftgu1-3.fna.fbcdn.net/v/t39.30808-1/450557001_122100854132403797_5929500965298241666_n.jpg?stp=dst-jpg_s200x200&_nc_cat=101&ccb=1-7&_nc_sid=0ecb9b&_nc_eui2=AeEiKNDAi0UOqBHA5MFTN2XZuwWnfJYgGia7Bad8liAaJsQCtcXv3aRxSQtYS44DSeymjTHUdPmyDuggDwU89arX&_nc_ohc=-vpii0aug1MQ7kNvgGqO9Tt&_nc_zt=24&_nc_ht=scontent.ftgu1-3.fna&_nc_gid=AGxiZ-oRT3oflpvyAFS0lY3&oh=00_AYBsKu1PC_vgy7tzvj_gw8CPq_c34VA4dzUQPzaE4bSrag&oe=674562F0">
+                                    <option value="1" data-photo="https://laferreabc.lat/storage/g.jpg">
                                         Gerson</option>
-                                    <option value="2"
-                                        data-photo="https://scontent.ftgu1-2.fna.fbcdn.net/v/t39.30808-1/459706924_27301687216111328_2219391849533807448_n.jpg?stp=dst-jpg_s100x100&_nc_cat=101&ccb=1-7&_nc_sid=0ecb9b&_nc_eui2=AeGG9CLOARw7MLWsYIjp9YJ3dp0twd9kMuB2nS3B32Qy4PU0EtjjjsOImj2m1Ec9KWy9VCa1rfZ6-NhRC9rmNBRS&_nc_ohc=W5zm1eW--DMQ7kNvgFW0hbv&_nc_zt=24&_nc_ht=scontent.ftgu1-2.fna&_nc_gid=Aak8lYEYqGXlL-DPW1pqg28&oh=00_AYBoCoX35zHKOxayigumUhEFBY2kcyUNFfiZZQxzDBWP8g&oe=67453B91">
+                                    <option value="2" data-photo="https://laferreabc.lat/storage/c.jpg">
                                         Cloris</option>
 
                                 </select>
@@ -291,6 +290,23 @@
         tbody {
             vertical-align: middle !important
         }
+
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter {
+            display: inline-block;
+            /* Mantener en la misma fila */
+            margin-bottom: 10px;
+            vertical-align: middle;
+            padding: 5px;
+        }
+
+        /* Input y Select: Diseño normal */
+        .dataTables_wrapper .dataTables_filter input,
+        .dataTables_wrapper .dataTables_length select {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 3px 20px;
+        }
     </style>
 @endpush
 
@@ -316,6 +332,8 @@
                 processing: true,
                 serverSide: true,
                 responsive: true,
+                autoWidth: false,
+                dom: '<"top"l><"top"f>rt<"bottom"ip><"clear">', // Personalización del DOM
                 searching: true,
                 ajax: {
                     url: '/notas/json',
@@ -360,14 +378,14 @@
                             if (data === 'Gerson') {
                                 return `
                     <div class="d-flex align-items-center">
-                        <img src="https://scontent.ftgu1-3.fna.fbcdn.net/v/t39.30808-1/450557001_122100854132403797_5929500965298241666_n.jpg?stp=dst-jpg_s200x200&_nc_cat=101&ccb=1-7&_nc_sid=0ecb9b&_nc_eui2=AeEiKNDAi0UOqBHA5MFTN2XZuwWnfJYgGia7Bad8liAaJsQCtcXv3aRxSQtYS44DSeymjTHUdPmyDuggDwU89arX&_nc_ohc=-vpii0aug1MQ7kNvgGqO9Tt&_nc_zt=24&_nc_ht=scontent.ftgu1-3.fna&_nc_gid=AGxiZ-oRT3oflpvyAFS0lY3&oh=00_AYBsKu1PC_vgy7tzvj_gw8CPq_c34VA4dzUQPzaE4bSrag&oe=674562F0" alt="${data.name}" class="rounded-circle me-2" width="30" height="30">
+                        <img src="https://laferreabc.lat/storage/g.jpg" alt="${data.name}" class="rounded-circle me-2" width="30" height="30">
                         <span>${data}</span>
                     </div>
                 `;
                             } else {
                                 return `
                     <div class="d-flex align-items-center">
-                        <img src="https://scontent.ftgu1-2.fna.fbcdn.net/v/t39.30808-1/459706924_27301687216111328_2219391849533807448_n.jpg?stp=dst-jpg_s100x100&_nc_cat=101&ccb=1-7&_nc_sid=0ecb9b&_nc_eui2=AeGG9CLOARw7MLWsYIjp9YJ3dp0twd9kMuB2nS3B32Qy4PU0EtjjjsOImj2m1Ec9KWy9VCa1rfZ6-NhRC9rmNBRS&_nc_ohc=W5zm1eW--DMQ7kNvgFW0hbv&_nc_zt=24&_nc_ht=scontent.ftgu1-2.fna&_nc_gid=Aak8lYEYqGXlL-DPW1pqg28&oh=00_AYBoCoX35zHKOxayigumUhEFBY2kcyUNFfiZZQxzDBWP8g&oe=67453B91" alt="${data.name}" class="rounded-circle me-2" width="30" height="30">
+                        <img src="https://laferreabc.lat/storage/c.jpg" alt="${data.name}" class="rounded-circle me-2" width="30" height="30">
                         <span>${data}</span>
                     </div>
                 `;
@@ -425,11 +443,11 @@
                         $('#responsable').val(data.id_responsable).change(); // Establece el responsable
                         if (data.id_responsable == 1) {
                             $('#responsablePhoto').attr('src',
-                                'https://scontent.ftgu1-3.fna.fbcdn.net/v/t39.30808-1/450557001_122100854132403797_5929500965298241666_n.jpg?stp=dst-jpg_s200x200&_nc_cat=101&ccb=1-7&_nc_sid=0ecb9b&_nc_eui2=AeEiKNDAi0UOqBHA5MFTN2XZuwWnfJYgGia7Bad8liAaJsQCtcXv3aRxSQtYS44DSeymjTHUdPmyDuggDwU89arX&_nc_ohc=-vpii0aug1MQ7kNvgGqO9Tt&_nc_zt=24&_nc_ht=scontent.ftgu1-3.fna&_nc_gid=AGxiZ-oRT3oflpvyAFS0lY3&oh=00_AYBsKu1PC_vgy7tzvj_gw8CPq_c34VA4dzUQPzaE4bSrag&oe=674562F0'
+                                'https://laferreabc.lat/storage/g.jpg'
                             );
                         } else if (data.id_responsable == 2)
                             $('#responsablePhoto').attr('src',
-                                'https://scontent.ftgu1-2.fna.fbcdn.net/v/t39.30808-1/459706924_27301687216111328_2219391849533807448_n.jpg?stp=dst-jpg_s100x100&_nc_cat=101&ccb=1-7&_nc_sid=0ecb9b&_nc_eui2=AeGG9CLOARw7MLWsYIjp9YJ3dp0twd9kMuB2nS3B32Qy4PU0EtjjjsOImj2m1Ec9KWy9VCa1rfZ6-NhRC9rmNBRS&_nc_ohc=W5zm1eW--DMQ7kNvgFW0hbv&_nc_zt=24&_nc_ht=scontent.ftgu1-2.fna&_nc_gid=Aak8lYEYqGXlL-DPW1pqg28&oh=00_AYBoCoX35zHKOxayigumUhEFBY2kcyUNFfiZZQxzDBWP8g&oe=67453B91'
+                                'https://laferreabc.lat/storage/c.jpg'
                             );
 
                     } else {

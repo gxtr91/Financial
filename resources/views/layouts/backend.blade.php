@@ -309,13 +309,15 @@
 
                             </ul>
                         </li>
-                        <li class="nav-main-heading">Administracion</li>
                         <li class="nav-main-item">
-                            <a class="nav-main-link" href="">
-                                <i class="nav-main-link-icon fa fa-share-nodes"></i>
-                                <span class="nav-main-link-name">Parametros</span>
-
+                            <a class="nav-main-link" href="{{ route('logout') }}"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="nav-main-link-icon si si-logout"></i>
+                                <span class="nav-main-link-name">Cerrar sesión</span>
                             </a>
+                            <form method="POST" id="logout-form" action="{{ route('logout') }}">
+                                @csrf
+                            </form>
                         </li>
                     </ul>
                 </div>
@@ -347,44 +349,7 @@
                 <!-- END Left Section -->
 
                 <!-- Right Section -->
-                <div class="space-x-1">
-                    <!-- User Dropdown -->
-                    <div class="dropdown d-inline-block">
-                        <button type="button" class="btn btn-alt-secondary" id="page-header-user-dropdown"
-                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-fw fa-user d-sm-none"></i>
-                            <span class="d-none d-sm-inline-block">User</span>
-                            <i class="fa fa-fw fa-angle-down opacity-50 ms-1 d-none d-sm-inline-block"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end p-0" aria-labelledby="page-header-user-dropdown">
 
-                            <div class="p-2">
-
-
-                                <!-- END Side Overlay -->
-
-                                <div role="separator" class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="javascript:void(0)" href="{{ route('logout') }}"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    <i class="far fa-fw fa-arrow-alt-circle-left me-1"></i> Cerrar sesión
-                                </a>
-                                <form method="POST" id="logout-form" action="{{ route('logout') }}">
-                                    @csrf
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- END User Dropdown -->
-
-                    <!-- Notifications Dropdown -->
-
-                    <!-- END Notifications Dropdown -->
-
-                    <!-- Toggle Side Overlay -->
-                    <!-- Layout API, functionality initialized in Template._uiApiLayout() -->
-
-                    <!-- END Toggle Side Overlay -->
-                </div>
                 <!-- END Right Section -->
             </div>
             <!-- END Header Content -->

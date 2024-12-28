@@ -1,7 +1,8 @@
 @extends('layouts.backend')
 @section('content')
-    <button type="button" class="btn btn-lg rounded-0 btn-hero btn-primary me-1 mb-3" id="abrirModal">
-        <i class="fa fa-fw fa-money-bill-1 me-1"></i> Agregar transacción
+    <button type="button" class="btn btn-primary btn-floating" id="abrirModal"
+        style="z-index:100; position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background-color: #28a745; display: flex; justify-content: center; align-items: center; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);">
+        <i class="fa fa-plus" style="font-size: 24px; color: #fff;"></i>
     </button>
     <div class="content">
         <div class="row justify-content-between align-items-center py-3 pt-md-3 pb-md-0">
