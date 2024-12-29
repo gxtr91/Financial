@@ -1,7 +1,7 @@
 @extends('layouts.backend')
 @section('content')
     <button onclick="openNotaModal()" type="button" class="btn btn-primary btn-floating" id="abrirModal"
-        style="z-index:100; position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background-color: #28a745; display: flex; justify-content: center; align-items: center; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);">
+        style="z-index:100; position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background-color: #308a5ab3; display: flex; justify-content: center; align-items: center; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);">
         <i class="fa fa-plus" style="font-size: 24px; color: #fff;"></i>
     </button>
 
@@ -21,7 +21,7 @@
                             <th style="width: 10%">Estado</th>
                             <th>Nombre</th>
                             <th>Prioridad</th>
-                            <th><i class="fa fa-calendar-alt me-1"></i>Fecha Límite</th>
+                            <th><i class="fa fa-calendar-alt me-1"></i>Fecha</th>
                             <th>Responsable</th>
                             <th style="width: 8%">Acciones</th>
                         </tr>
@@ -167,6 +167,13 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
     <style>
+         table#data-table tbody tr:nth-child(even):hover td {
+            background-color: #f8f8f8 !important;
+        }
+
+        table#data-table tbody tr:nth-child(odd):hover td {
+            background-color: #f8f8f8 !important;
+        }
         .estado {
             cursor: pointer;
             padding: 5px 10px;
@@ -329,6 +336,22 @@
         }
         $(document).ready(function() {
             const table = $('#data-table').DataTable({
+                language: {
+                    search: "Buscar:",
+                    lengthMenu: 'Mostrar _MENU_ notas',
+                    info: "_START_ - _END_ de _TOTAL_",
+                    infoEmpty: "Mostrando 0 a 0 de 0 registros",
+                    infoFiltered: "(filtrado de _MAX_ registros en total)",
+                    loadingRecords: "Cargando...",
+                    processing: "Procesando...",
+                    zeroRecords: "No se encontraron registros",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Sig",
+                        previous: "Ant"
+                    }
+                },
                 processing: true,
                 serverSide: true,
                 responsive: true,
@@ -339,15 +362,21 @@
                     url: '/notas/json',
                     type: 'GET',
                 },
+                columnDefs: [{
+                    orderable: false,
+                        targets: [1, 3,4]
+                }
+                ],
+                
                 autoWidth: false,
                 columns: [{
                         data: 'completada',
                         className: 'centrar-texto',
                         render: function(data, type, row) {
                             if (data === 0) {
-                                return `<span class="estado estado-sincomenzar" data-id="${row.id}">Sin empezar</span>`;
+                                return `<span class="estado estado-sincomenzar" data-id="${row.id}" style="color: red;">&#10060;</span>`;
                             } else if (data === 1) {
-                                return `<span class="estado estado-completado" data-id="${row.id}">Completado</span>`;
+                                return `<span class="estado estado-completado" data-id="${row.id}" style="color: green;">&#10004;</span>`;
                             }
                             return data; // Valor por defecto si no coincide
                         }
@@ -408,13 +437,7 @@
                     $('[data-bs-toggle="tooltip"]').tooltip();
                 },
                 pageLength: 10, // Registros por página
-                language: {
-                    paginate: {
-                        next: 'Siguiente',
-                        previous: 'Anterior',
-                    },
-                    lengthMenu: 'Mostrar _MENU_ notas',
-                },
+               
             });
         });
 
@@ -578,12 +601,12 @@
                 success: function(response) {
                     if (response.nuevaCompletada) {
                         // Cambiar visualmente a "Completado"
-                        span.removeClass('estado-sincomenzar').addClass('estado-completado').text(
-                            'Completado');
+                        span.removeClass('estado-sincomenzar').addClass('estado-completado').html('&#10004');
+
                     } else {
                         // Cambiar visualmente a "Sin empezar"
-                        span.removeClass('estado-completado').addClass('estado-sincomenzar').text(
-                            'Sin empezar');
+                        span.removeClass('estado-completado').addClass('estado-sincomenzar').html('&#10060');
+
                     }
                 },
                 error: function() {

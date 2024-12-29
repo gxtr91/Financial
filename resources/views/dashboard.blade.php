@@ -2,7 +2,7 @@
 
 @section('content')
     <button type="button" class="btn btn-primary btn-floating" id="abrirModal"
-        style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background-color: #28a745; display: flex; justify-content: center; align-items: center; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);">
+        style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background-color: #308a5ab3; display: flex; justify-content: center; align-items: center; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);">
         <i class="fa fa-plus" style="font-size: 24px; color: #fff;"></i>
     </button>
     <div class="content">
@@ -41,8 +41,13 @@
                         L {{ number_format($diferencia, 2, '.', ',') }}
 
                     </div>
-                    <a class="link-fx fs-sm fw-bold text-uppercase text-muted" href="javascript:void(0)">deficit o
-                        Superávit</a>
+                    <a class="link-fx fs-sm fw-bold text-uppercase text-muted" href="javascript:void(0)">
+                        @if ($diferencia > 0)
+                        Disponible
+                        @else
+                        Déficit
+                        @endif
+                        </a>
                 </div>
             </div>
         </div>
@@ -74,7 +79,7 @@
                         mes</a>
                 </div>
                 <div class="col-md-4 py-3">
-                    @if ($diferencia > 0)
+                    @if ($diferencia_anterior > 0)
                         <div class="fs-1 fw-light mb-1 text-success">
                         @else
                             <div class="fs-1 fw-light text-danger mb-1">
@@ -82,8 +87,13 @@
                     L {{ number_format($diferencia_anterior, 2, '.', ',') }}
 
                 </div>
-                <a class="link-fx fs-sm fw-bold text-uppercase text-muted" href="javascript:void(0)">deficit o
-                    Superávit</a>
+                <a class="link-fx fs-sm fw-bold text-uppercase text-muted" href="javascript:void(0)">
+                    @if ($diferencia_anterior > 0)
+                    Disponible
+                    @else
+                    Déficit
+                    @endif
+                    </a>
             </div>
         </div>
     </div>

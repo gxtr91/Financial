@@ -38,6 +38,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/json', [TransaccionesController::class, 'json'])->name('json');
         Route::post('/store', [TransaccionesController::class, 'store'])->name('store');
         Route::get('/load-transacciones', [TransaccionesController::class, 'loadMore'])->name('load');
+        Route::delete('/{id}', [TransaccionesController::class, 'destroy'])->name('destroy');
+        Route::post('/update', [TransaccionesController::class, 'update'])->name('update');
+
+
     });
 
     Route::prefix('reportes')->name('reportes.')->group(function () {

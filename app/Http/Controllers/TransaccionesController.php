@@ -38,11 +38,27 @@ class TransaccionesController extends Controller
 
         if ($request->filled('startDate') && $request->filled('endDate')) {
             $query->whereBetween('fecha', [$request->startDate, $request->endDate]);
+        }else {
+            // Si no hay filtros de fecha, usar desde el día 1 del mes actual hasta hoy
+            $startDate = Carbon::now()->startOfMonth()->format('Y-m-d'); // Día 1 del mes actual
+            $endDate = Carbon::now()->format('Y-m-d'); // Fecha actual
+            $query->whereBetween('fecha', [$startDate, $endDate]);
         }
         $query->orderBy('fecha', 'desc');
-
         $cuentas = $query->get();
+        $sumaMonto = $query->sum('monto');
+        // Retornar los resultados en formato JSON
         return Datatables::of($cuentas)
+        ->addColumn('acciones', function($row){
+            $acciones = '<div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-alt-secondary js-bs-tooltip-enabled" data-bs-toggle="tooltip" aria-label="Eliminar" data-bs-original-title="Eliminar" onclick="deleteTransaction(' . $row->id . ')">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>';
+            return $acciones;
+        })
+        ->rawColumns(['acciones'])
+        ->with(['sumaMonto' => $sumaMonto]) // Incluir la suma como dato adicional
         ->toJson();
     }
 
@@ -102,5 +118,56 @@ class TransaccionesController extends Controller
         ]);
 
         return $response->getBody();
+    }
+
+    public function update(Request $request){
+        $id = $request->input('id');
+        try {
+            $transaccion = Transaccion::find($id);
+
+            if ($request->input('data')==2){
+                $transaccion->descripcion=$request->input('value');
+            }
+            if ($request->input('data')==3){
+                $transaccion->monto=$request->input('value');
+            }
+         
+
+           // $request->input('data')==0 ?  $cuenta->nombre_cuenta=$request->input('value') :  $cuenta->limite=$request->input('value');
+
+            $transaccion->save();
+            return response()->json(['success' => true, 'message' => 'success']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'error']);
+        }
+
+    }
+
+    public function destroy($id)
+    {
+        $transaccion = Transaccion::findOrFail($id);
+        // Obtener el mes y año de la fecha de la transacción
+
+        $fechaTransaccion = Carbon::parse($transaccion->fecha); 
+
+        $transaccionMes = $fechaTransaccion->format('m'); // 'm' devuelve el mes (01-12)
+        $transaccionAnio = $fechaTransaccion->format('Y'); // 'Y' devuelve el año (YYYY)
+
+
+        // Obtener el mes y año actuales
+        $mesActual = now()->format('m');  // Mes actual
+        $anioActual = now()->format('Y'); // Año actual
+
+        // Verificar si el mes y año de la transacción son del mes y año actuales
+        if ($transaccionMes == $mesActual && $transaccionAnio == $anioActual) {
+            // Si la fecha de la transacción es del mes y año actual, proceder con la eliminación
+            $transaccion->delete();
+            return response()->json(['success' => 'Transacción eliminada!']);
+        }else{
+            return response()->json(['success' => 'No puedes eliminar transacciones de periodos anteriores!']);
+
+        }
+
+        //return redirect()->route('notas.index');
     }
 }

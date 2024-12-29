@@ -75,7 +75,6 @@ class NotaController extends Controller
                 'prioridad' => $nota->prioridad,
                 'completada' => $nota->completada ? 1 : 0,
                 'responsable' => $nota->responsable ? $nota->responsable->name : 'Sin asignar', // Asegúrate de que el modelo User tenga un campo `name`
-
                 'actions' => $actionButtons, // Agrega los botones de acción
             ];
         });

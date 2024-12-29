@@ -1,7 +1,7 @@
 @extends('layouts.backend')
 @section('content')
     <button type="button" class="btn btn-primary btn-floating" id="abrirModal"
-        style="z-index:100; position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background-color: #28a745; display: flex; justify-content: center; align-items: center; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);">
+        style="z-index:100; position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background-color: #308a5ab3; display: flex; justify-content: center; align-items: center; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);">
         <i class="fa fa-plus" style="font-size: 24px; color: #fff;"></i>
     </button>
     <!-- Page Content -->
