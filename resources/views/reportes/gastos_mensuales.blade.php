@@ -18,15 +18,15 @@
                 aria-labelledby="btabs-animated-fade-home-tab" tabindex="0">
                 <div class="block block-content block-content-full">
                     <table id="data-table"
-                        class="table table-bordered table-striped table-vcenter js-dataTable-responsive dataTable no-footer dtr-inline"
-                        style="width:100%">
+                    class="table table-bordered table-striped table-vcenter js-dataTable-responsive dataTable no-footer dtr-inline"
+                    style="width:100%">
                         <thead>
                             <tr>
                                 <th data-priority="1" style="width:100px">Cuenta</th>
                                 <th data-priority="1" style="width:250px">Descripcion</th>
                                 <th data-priority="1" style="width:90px">Limite</th>
                                 <th data-priority="1" style="width:100px">Gasto actual</th>
-                                <th data-priority="1" style="width:100px">Disponible</th>
+                                <th data-priority="1" style="width:100px">Diferencia</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -34,7 +34,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th>---</th>
+                                <th>TOTALES</th>
                                 <th colspan="4" style="text-align:right">Total:</th>
                             </tr>
                         </tfoot>
@@ -98,119 +98,157 @@
     <link rel="stylesheet" href="{{ asset('/js/plugins/datatables-responsive-bs5/css/responsive.bootstrap5.min.css') }}">
     <!-- END TNS -->
     <link rel="stylesheet" href="{{ asset('/js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css') }}">
-
     <style>
+        
         table#data-table tbody tr:nth-child(even):hover td {
-            background-color: #f8f8f8 !important;
+           background-color: #f8f8f8 !important;
+       }
+
+       table#data-table tbody tr:nth-child(odd):hover td {
+           background-color: #f8f8f8 !important;
+       }
+       .estado {
+           cursor: pointer;
+           padding: 5px 10px;
+           border-radius: 10px;
+           font-weight: bold;
+           text-align: center;
+           display: inline-block;
+       }
+
+       .estado-sincomenzar {
+           background-color: #f8d7da;
+           color: #721c24;
+       }
+
+       .estado-completado {
+           background-color: #d4edda;
+           color: #155724;
+       }
+
+       @media (min-width: 768px) {
+
+           /* Asume que 768px es el breakpoint md en Bootstrap */
+           .d-md-flex.justify-content-between .dropdown,
+           .form-group {
+               flex: 1;
+           }
+
+           .d-md-flex.justify-content-between .dropdown {
+               max-width: 350px;
+               /* Ajustar según sea necesario */
+           }
+
+           .form-group {
+               min-width: 200px;
+               /* Ajustar según sea necesario */
+           }
+
+           .form-select {
+               width: 100%;
+               /* Asegura que select2 tome toda la anchura del form-group */
+           }
+           
+       }
+
+
+
+       .btn-pdf {
+           background-color: #3498db;
+           color: #fff;
+           border: none;
+           padding: 8px 16px;
+           border-radius: 4px;
+           cursor: pointer;
+       }
+
+       .btn-pdf:hover {
+           background-color: #2980b9;
+       }
+
+       .table> :not(caption)>*>* {
+           padding: 0.20rem 0.75rem !important;
+       }
+
+       div.dt-buttons {
+            display: flex;
+            justify-content: space-between; /* Distribuir los elementos: uno a la izquierda, otro a la derecha */
+            align-items: center; /* Centrar los elementos verticalmente */
+            flex-wrap: nowrap; /* Evitar que se envuelvan inicialmente */
         }
 
-        table#data-table tbody tr:nth-child(odd):hover td {
-            background-color: #f8f8f8 !important;
-        }
-    </style>
-    <style>
-        @media (min-width: 768px) {
+       /* Estilos para hacer el iframe responsivo */
+       .responsive-iframe {
+           position: relative;
+           width: 100%;
+           height: 0;
+           padding-bottom: 56.25%;
+           /* Aspect ratio 16:9 */
+       }
 
-            /* Asume que 768px es el breakpoint md en Bootstrap */
-            .d-md-flex.justify-content-between .dropdown,
-            .form-group {
-                flex: 1;
-            }
+       .responsive-iframe iframe {
+           position: absolute;
+           top: 0;
+           left: 0;
+           width: 100%;
+           height: 100%;
+           border: none;
+       }
 
-            .d-md-flex.justify-content-between .dropdown {
-                max-width: 350px;
-                /* Ajustar según sea necesario */
-            }
+       #data-table thead,
+       td {
+           font-size: small;
 
-            .form-group {
-                min-width: 200px;
-                /* Ajustar según sea necesario */
-            }
+       }
 
-            .form-select {
-                width: 100%;
-                /* Asegura que select2 tome toda la anchura del form-group */
-            }
-        }
+       .custom-select-size {
+           width: 50%;
+           /* Ajusta el ancho */
+           height: 35px;
+           /* Ajusta la altura */
+           font-size: 14px;
+           /* Ajusta el tamaño del texto */
+       }
 
-        #data-table {
-            visibility: hidden;
-        }
+       .centrar-texto {
+           text-align: center;
 
-        .btn-pdf {
-            background-color: #3498db;
-            color: #fff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+       }
 
-        .btn-pdf:hover {
-            background-color: #2980b9;
-        }
+       .dataTables_filter {
+           display: block;
+       }
 
-        .table> :not(caption)>*>* {
-            padding: 0.20rem 0.75rem !important;
-        }
+       .text-right {
+           text-align: right;
+       }
 
-        div.dt-buttons {
-            position: relative;
-            float: right;
-            padding: 0 0 10px 10px;
-            top: -5px;
-        }
+       #data-table th:nth-child(6) {
+           text-align: center;
+           /* Alinea el texto del encabezado a la derecha */
+       }
 
-        /* Estilos para hacer el iframe responsivo */
-        .responsive-iframe {
-            position: relative;
-            width: 100%;
-            height: 0;
-            padding-bottom: 56.25%;
-            /* Aspect ratio 16:9 */
-        }
+       tbody {
+           vertical-align: middle !important
+       }
 
-        .responsive-iframe iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
+       .dataTables_wrapper .dataTables_length,
+       .dataTables_wrapper .dataTables_filter {
+           display: inline-block;
+           /* Mantener en la misma fila */
+           margin-bottom: 10px;
+           vertical-align: middle;
+           padding: 5px;
+       }
 
-        #data-table thead,
-        td {
-            font-size: small;
-        }
-
-        .custom-select-size {
-            width: 50%;
-            /* Ajusta el ancho */
-            height: 35px;
-            /* Ajusta la altura */
-            font-size: 14px;
-            /* Ajusta el tamaño del texto */
-        }
-
-        .centrar-texto {
-            text-align: center;
-
-        }
-
-        .dataTables_filter {
-            display: block;
-        }
-
-        .text-right {
-            text-align: right;
-        }
-
-        #data-table th:nth-child(4) {
-            text-align: center;
-            /* Alinea el texto del encabezado a la derecha */
-        }
-    </style>
+       /* Input y Select: Diseño normal */
+       .dataTables_wrapper .dataTables_filter input,
+       .dataTables_wrapper .dataTables_length select {
+           border: 1px solid #ddd;
+           border-radius: 5px;
+           padding: 3px 20px;
+       }
+   </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css" rel="stylesheet">
 @endpush
@@ -234,7 +272,7 @@
             fechaInput.value = hoy;
             var tabla = $('#data-table').DataTable({
                 language: {
-                    search: "Buscar:",
+                    search: "Descripción:",
                     lengthMenu: "_MENU_",
                     info: "_START_ - _END_ de _TOTAL_",
                     infoEmpty: "Mostrando 0 a 0 de 0 registros",
@@ -248,17 +286,6 @@
                         next: "Sig",
                         previous: "Ant"
                     }
-                },
-                header: true,
-                initComplete: function(settings, json) {
-                    $('#data-table').css('visibility', 'visible');
-                    $('#data-table thead th').css({
-                        "background-color": "rgba(48, 138, 90, 0.8)",
-                        "height": "30px",
-                        "font-size": "14px",
-                        "color": "white",
-                        "width": "auto"
-                    });
                 },
                 order: [
                     [3, "desc"]
@@ -309,7 +336,7 @@
                     {
                         data: 'limite',
                         name: 'limite',
-                        className: 'text-right',
+                        className: 'text-end',
                         render: function(data, type, row) {
                             return parseFloat(data).toLocaleString('en', {
                                 minimumFractionDigits: 2,
@@ -320,7 +347,7 @@
                     {
                         data: 'sumatoria_transacciones',
                         name: 'sumatoria_transacciones',
-                        className: 'text-right',
+                        className: 'text-end',
                         render: function(data, type, row) {
                             return parseFloat(data).toLocaleString('en', {
                                 minimumFractionDigits: 2,
@@ -331,7 +358,7 @@
                     {
                         data: 'saldo_disponible',
                         name: 'saldo_disponible',
-                        className: 'text-right',
+                        className: 'text-end',
                         render: function(data, type, row) {
                             var saldo = parseFloat(data);
                             var formatted = saldo.toLocaleString('en', {
@@ -346,45 +373,55 @@
                                 return '<span style="font-weight:bold; color:green;">' + formatted +
                                     '</span>';
                             } else {
-                                return '<span style="font-weight:bold; color:orange;">' +
+                                return '<span style="font-weight:bold; color:black;">' +
                                     formatted +
                                     '</span>';
                             }
                         }
                     }
                 ],
-                footerCallback: function(row, data, start, end, display) {
-                    var api = this.api();
-                    var totalSaldo = api.column(3, {
-                        page: 'current'
-                    }).data().reduce(function(a, b) {
-                        return parseFloat(a) + parseFloat(b);
-                    }, 0);
-                    var formatted = totalSaldo.toLocaleString('en', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-                    $(api.column(3).footer()).html('Gasto actual: L ' + formatted);
-                },
                 dom: 'Bfrtip',
-                drawCallback: function() {
-                    var api = this.api();
-                    var total = api.column(api.columns().count() - 3).data().reduce(function(a, b) {
-                        return parseFloat(a) + parseFloat(b);
-                    }, 0);
-                    var totalFormateado = total.toLocaleString('en', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-                    $('#total').html('Presupuesto: L ' + totalFormateado);
-                }
+
+                footerCallback: function(row, data, start, end, display) {
+    var api = this.api();
+
+    // 1. Cálculo del Gasto actual (columna 3)
+    var totalSaldo = api.column(3, { page: 'current' }).data().reduce(function(a, b) {
+        return parseFloat(a) + parseFloat(b);
+    }, 0);
+    var formattedSaldo = totalSaldo.toLocaleString('en', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
+    // 2. Cálculo del Presupuesto total (columna -3 desde el final)
+    var totalPresupuesto = api.column(api.columns().count() - 3).data().reduce(function(a, b) {
+        return parseFloat(a) + parseFloat(b);
+    }, 0);
+    var formattedPresupuesto = totalPresupuesto.toLocaleString('en', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
+    // 3. Cálculo de la Diferencia y determinación del estado
+    var diferencia = totalPresupuesto - totalSaldo;
+    var estado = diferencia >= 0 ? '<span style="color:green">Disponible</span>' : '<span style="color:red">Sobre gasto</span>';
+    var formattedDiferencia = Math.abs(diferencia).toLocaleString('en', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
+    // Renderización en el footer
+    $(api.column(3).footer()).html(
+        `<div>Presupuesto: L ${formattedPresupuesto}</div>
+         <div>Gasto actual: L ${formattedSaldo}</div>
+         <div>Diferencia: L ${formattedDiferencia} (${estado})</div>`
+    );
+}
+
             });
 
-            $('.dt-buttons').append('<div style="font-weight:bold" id="total"></div>');
-            $('.dt-buttons div').css({
-                'padding': '5px',
-                'display': 'inline-block'
-            });
+        
 
             $('#abrirModal').click(function() {
                 $('#modal-block-fadein').modal('show');

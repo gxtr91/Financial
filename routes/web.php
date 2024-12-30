@@ -47,6 +47,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('reportes')->name('reportes.')->group(function () {
         Route::get('/gastos_mensuales', ReportesController::class)->name('gastos_mensuales');
         Route::get('/json_gastos_mensuales', [ReportesController::class, 'json'])->name('json_gastos_mensuales');
+        Route::get('/graficos', [ReportesController::class, 'graficos'])->name('graficos-m');
+
     });
 
     Route::prefix('notas')->name('notas.')->group(function () {
