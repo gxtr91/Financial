@@ -35,21 +35,35 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addAccountModalLabel">Agregar Nueva Cuenta</h5>
-
                 </div>
                 <form id="addAccountForm" method="POST">
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="nombre_cuenta">Nombre de la Cuenta</label>
+                            <label for="nombre_cuenta">Nombre</label>
                             <input type="text" class="form-control" id="nombre_cuenta" name="nombre_cuenta" required>
                         </div>
                         <div class="form-group mt-4">
                             <label for="descripcion">Descripción</label>
                             <textarea class="form-control" id="descripcion" name="descripcion" required></textarea>
                         </div>
+                        <div class="form-group mt-4">
+                            <label for="descripcion">Dia de pago (opcional)</label>
+                            <input type="number" class="form-control" id="dia_pago" name="dia_pago"
+                                placeholder="Ingrese día" min="1" max="31"
+                                oninput="this.value = this.value.slice(0, 2)">
+                        </div>
+                        <script>
+                            document.getElementById("dia_pago").addEventListener("change", () => {
+                                const dia = parseInt(document.getElementById("dia_pago").value, 10);
+                                if (dia >= 1 && dia <= 31) {
+                                    console.log(`Día ingresado: ${dia}`);
+                                } else {
+                                    console.log("Día inválido.");
+                                }
+                            });
+                        </script>
                         <div class="form-group">
-
                             <div class="form-check form-switch mt-4 mb-4">
                                 <input class="form-check-input" type="checkbox" value="" name ="active"
                                     id="active">
@@ -94,7 +108,8 @@
                         <div class="form-group">
                             <label for="nombre_cuenta">Seleccione la Cuenta</label>
                             <div class="form-group col-12 ">
-                                <select class="js-select2 form-select" id="cuenta" name="cuenta" style="width: 100%;">
+                                <select class="js-select2 form-select" id="cuenta" name="cuenta"
+                                    style="width: 100%;">
                                     <option value="">::. Seleccione la cuenta .::</option>
                                     @foreach ($cuentas as $cuenta)
                                         <option value="{{ $cuenta->id }}">{{ $cuenta->nombre_cuenta }}</option>
@@ -129,6 +144,7 @@
     <!--end modal -->
 @endsection
 @push('js')
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         $(document).ready(function() {
             const fechaInput = document.getElementById("fecha");
@@ -221,4 +237,7 @@
 
         });
     </script>
+@endpush
+@push('css')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 @endpush

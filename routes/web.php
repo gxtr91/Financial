@@ -69,6 +69,7 @@ Route::middleware('auth')->group(function () {
 Route::prefix('cronJobs')->name('cronJobs.')->group(function () {
     Route::get('/notas', [CronJobsController::class, 'notas'])->name('notas');
     Route::get('/correr-notas', [CronJobsController::class, 'correrNotas'])->name('correr-notas');
+    Route::get('/recordatorios', [CronJobsController::class, 'recordatorios'])->name('recordatorios');
 
 });
 

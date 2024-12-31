@@ -304,7 +304,7 @@
                 var columnIndex = cell.index();
 
                 // Permitir la edición solo en ciertas columnas
-                if (columnIndex === 0 || columnIndex === 2 || columnIndex === 3) {
+                if (columnIndex === 0 || columnIndex === 2 || columnIndex === 3 || columnIndex === 4) {
                     if (selectedCell !==
                         this) { // Evitar múltiples instancias de inputField para la misma celda
                         if (selectedCell) {

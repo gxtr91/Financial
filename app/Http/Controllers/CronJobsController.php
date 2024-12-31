@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Nota;
 use App\Models\User;
+use App\Models\cuenta;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
+Use DB;
 
 class CronJobsController extends Controller
 {
@@ -76,5 +78,45 @@ class CronJobsController extends Controller
 
         //return  response()->json($notas);
 
+    }
+
+    public function recordatorios(Request $request){
+        $tokenEnviado = $request->query('token');
+
+        if ($tokenEnviado !== config('app.cron_job_token')) {
+            return response()->json(['error' => 'Acceso no autorizado'], 403);
+        }
+
+        // Día actual y día siguiente
+        $diaActual = date('j'); // Día actual
+        $diaSiguiente = $diaActual == date('t') ? 1 : $diaActual + 1; // Día siguiente, considerando el fin de mes
+
+        // Mes actual
+        $mesActual = date('m');
+            // Consulta
+        $cuentas = Cuenta::whereIn('fecha_pago', [$diaActual, $diaSiguiente])
+        ->whereNotExists(function ($query) use ($mesActual) {
+            $query->select(DB::raw(1))
+                ->from('transacciones')
+                ->whereColumn('transacciones.id_cuenta', 'cuentas.id')
+                ->whereMonth('transacciones.fecha', $mesActual); // Asegúrate de que `fecha` sea un campo válido
+        })
+        ->orderBy('limite')
+        ->get();
+
+        if (!$cuentas->isEmpty()) {
+            $mensaje = "";
+            $x=1;
+            foreach ($cuentas as $cuenta) {
+                $mensaje .= "<b>".$x.". ". $cuenta['nombre_cuenta'] . " - L. " . number_format($cuenta['limite'], 2, '.', ',').".</b>\n"; // <b> para negrita y \n para una nueva línea
+                $x++;
+            }
+            $mensaje="<b>❗Recordatorio de pagos (hoy y mañana)❗</b>\n\n" . $mensaje;
+            $this->sendTelegram($mensaje);
+
+        }
+        //$this->sendTelegram($mensaje);
+        //return  response()->json($notas);
+       // return $mensaje;
     }
 }

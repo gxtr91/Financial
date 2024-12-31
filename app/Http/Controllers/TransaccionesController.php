@@ -109,10 +109,14 @@ class TransaccionesController extends Controller
         $client = new Client();
         $url = "https://api.telegram.org/bot" . env('TELEGRAM_BOT_TOKEN') . "/sendMessage";
 
+        $label="Sobregiro";
+        if ($diferencia_actual>=0){
+            $label="Disponible";
+        }
         $response = $client->post($url, [
             'form_params' => [
                 'chat_id' => env('TELEGRAM_CHANNEL_ID'),
-                'text' => "<b>Nuevo registro</b>\n Cuenta: " . $cuenta . "\n Descripcion: " . $descripcion . " \n Monto: " . number_format($monto, 2, '.', ',')." \n\n Presupuesto asignado: " . number_format($presupuesto_cuenta, 2, '.', ',')."\n Gasto del mes acumulado: ".number_format($gasto_mes, 2, '.', ',')."\n Deficit o Superavit: ".number_format($diferencia_actual, 2, '.', ','),
+                'text' => "<b>Nueva transaccion</b>\n Cuenta: " . $cuenta . "\n Descripcion: " . $descripcion . " \n Monto: " . number_format($monto, 2, '.', ',')." \n\n Presupuesto asignado: " . number_format($presupuesto_cuenta, 2, '.', ',')."\n Gasto del mes acumulado: ".number_format($gasto_mes, 2, '.', ',')."\n ".$label.": ".number_format($diferencia_actual, 2, '.', ','),
                 'parse_mode' => 'HTML'
             ]
         ]);
@@ -131,7 +135,7 @@ class TransaccionesController extends Controller
             if ($request->input('data')==3){
                 $transaccion->monto=$request->input('value');
             }
-         
+
 
            // $request->input('data')==0 ?  $cuenta->nombre_cuenta=$request->input('value') :  $cuenta->limite=$request->input('value');
 
@@ -148,7 +152,7 @@ class TransaccionesController extends Controller
         $transaccion = Transaccion::findOrFail($id);
         // Obtener el mes y año de la fecha de la transacción
 
-        $fechaTransaccion = Carbon::parse($transaccion->fecha); 
+        $fechaTransaccion = Carbon::parse($transaccion->fecha);
 
         $transaccionMes = $fechaTransaccion->format('m'); // 'm' devuelve el mes (01-12)
         $transaccionAnio = $fechaTransaccion->format('Y'); // 'Y' devuelve el año (YYYY)

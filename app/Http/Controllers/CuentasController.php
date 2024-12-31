@@ -12,9 +12,10 @@ class CuentasController extends Controller
     public function __invoke(){
 
         $cuentas=Cuenta::all();
-        $columns = ['Nombre de cuenta','Es presupuesto?','Limite','Alerta','Opciones'];
+        $columns = ['Cuenta','Presupuesto','Limite','Alerta','Dia de pago','Opciones'];
         $json  = '[
             {"data": "nombre_cuenta", "name": "nombre_cuenta"},
+            {"data": "fecha_pago", "name": "fecha_pago"},
             {"data": "acciones", "name": "acciones", "className": "text-right",  "width": "70px"},
         ]';
         $ctx=[
@@ -66,7 +67,8 @@ class CuentasController extends Controller
             'descripcion' => $request->descripcion,
             'es_presupuesto' => $request->has('active') ? 'si' : NULL,
             'limite' => $request->limite ? $request->limite : 0.00,
-            'alerta' => $request->alerta ? $request->alerta:0.00
+            'alerta' => $request->alerta ? $request->alerta : 0.00,
+            'fecha_pago' => $request->dia_pago ? $request->dia_pago : NULL,
         ]);
 
         // Respuesta exitosa
@@ -93,6 +95,9 @@ class CuentasController extends Controller
                 }else{
                     $cuenta->alerta = $request->input('value');
                 }
+            }
+            if ($request->input('data')==4){
+                $cuenta->fecha_pago = $request->input('value') ? $request->input('value') : null;
             }
 
            // $request->input('data')==0 ?  $cuenta->nombre_cuenta=$request->input('value') :  $cuenta->limite=$request->input('value');
