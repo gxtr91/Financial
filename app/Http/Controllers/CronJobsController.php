@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Nota;
 use App\Models\User;
-use App\Models\cuenta;
+use App\Models\Cuenta;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
 Use DB;
